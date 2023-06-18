@@ -10,76 +10,83 @@ def get_user_information(users, driver=None, headless=True):
     driver = utils.init_driver(headless=headless)
 
     users_info = {}
-
+    sleep(10)
     for i, user in enumerate(users):
 
         log_user_page(user, driver)
 
         if user is not None:
-
             try:
                 following = driver.find_element_by_xpath(
                     '//a[contains(@href,"/following")]/span[1]/span[1]').text
                 followers = driver.find_element_by_xpath(
                     '//a[contains(@href,"/followers")]/span[1]/span[1]').text
             except Exception as e:
-                # print(e)
-                return
-
+                following = ""
+                followers = ""
             try:
-                element = driver.find_element_by_xpath('//div[contains(@data-testid,"UserProfileHeader_Items")]//a[1]')
-                website = element.get_attribute("href")
+                website = driver.find_element_by_xpath('//a[contains(@data-testid,"UserUrl")]').text
             except Exception as e:
-                # print(e)
                 website = ""
-
             try:
                 desc = driver.find_element_by_xpath('//div[contains(@data-testid,"UserDescription")]').text
             except Exception as e:
-                # print(e)
                 desc = ""
-            a = 0
             try:
-                join_date = driver.find_element_by_xpath(
-                    '//div[contains(@data-testid,"UserProfileHeader_Items")]/span[3]').text
-                birthday = driver.find_element_by_xpath(
-                    '//div[contains(@data-testid,"UserProfileHeader_Items")]/span[2]').text
-                location = driver.find_element_by_xpath(
-                    '//div[contains(@data-testid,"UserProfileHeader_Items")]/span[1]').text
+                join_date = driver.find_element_by_xpath('//span[contains(@data-testid,"UserJoinDate")]').text
             except Exception as e:
-                # print(e)
-                try:
-                    join_date = driver.find_element_by_xpath(
-                        '//div[contains(@data-testid,"UserProfileHeader_Items")]/span[2]').text
-                    span1 = driver.find_element_by_xpath(
-                        '//div[contains(@data-testid,"UserProfileHeader_Items")]/span[1]').text
-                    if hasNumbers(span1):
-                        birthday = span1
-                        location = ""
-                    else:
-                        location = span1
-                        birthday = ""
-                except Exception as e:
-                    # print(e)
-                    try:
-                        join_date = driver.find_element_by_xpath(
-                            '//div[contains(@data-testid,"UserProfileHeader_Items")]/span[1]').text
-                        birthday = ""
-                        location = ""
-                    except Exception as e:
-                        # print(e)
-                        join_date = ""
-                        birthday = ""
-                        location = ""
-            print("--------------- " + user + " information : ---------------")
-            print("Following : ", following)
-            print("Followers : ", followers)
-            print("Location : ", location)
-            print("Join date : ", join_date)
-            print("Birth date : ", birthday)
-            print("Description : ", desc)
-            print("Website : ", website)
-            users_info[user] = [following, followers, join_date, birthday, location, website, desc]
+                join_date = ""
+            try:
+                birthday = driver.find_element_by_xpath('//span[contains(@data-testid,"UserBirthdate")]').text
+            except Exception as e:
+                birthday = ""            
+            try:
+                location = driver.find_element_by_xpath('//span[contains(@data-testid,"UserLocation")]').text
+            except Exception as e:
+                location = ""
+            try:
+                professional = driver.find_element_by_xpath('//span[contains(@data-testid,"UserProfessionalCategory")]').text
+            except Exception as e:
+                professional = ""      
+            try:
+                name = driver.find_element_by_xpath('//h2[contains(@role,"heading")]').text
+            except Exception as e:
+                name = "" 
+            try:
+                tweets = driver.find_element_by_xpath('//h2[contains(@role,"heading")]/following-sibling::div').text
+            except Exception as e:
+                tweets = ""                 
+                 
+            # try:
+            #     join_date = driver.find_element_by_xpath(
+            #         '//div[contains(@data-testid,"UserProfileHeader_Items")]/span[3]').text
+            #     birthday = driver.find_element_by_xpath(
+            #         '//div[contains(@data-testid,"UserProfileHeader_Items")]/span[2]').text
+            #     location = driver.find_element_by_xpath(
+            #         '//div[contains(@data-testid,"UserProfileHeader_Items")]/span[1]').text
+            # except Exception as e:
+            #     try:
+            #         join_date = driver.find_element_by_xpath(
+            #             '//div[contains(@data-testid,"UserProfileHeader_Items")]/span[2]').text
+            #         span1 = driver.find_element_by_xpath(
+            #             '//div[contains(@data-testid,"UserProfileHeader_Items")]/span[1]').text
+            #         if hasNumbers(span1):
+            #             birthday = span1
+            #             location = ""
+            #         else:
+            #             location = span1
+            #             birthday = ""
+            #     except Exception as e:
+            #         try:
+            #             join_date = driver.find_element_by_xpath(
+            #                 '//div[contains(@data-testid,"UserProfileHeader_Items")]/span[1]').text
+            #             birthday = ""
+            #             location = ""
+            #         except Exception as e:
+            #             join_date = ""
+            #             birthday = ""
+            #             location = ""
+            users_info[user] = [name,following, followers, tweets ,join_date, birthday, location,professional, website, desc,]
 
             if i == len(users) - 1:
                 driver.close()
